@@ -11,14 +11,14 @@ const Home = () => {
   const [cartItems, setCartItems] = useState([])
 
   const addItemToCart = dish => {
-    const alreadyexists = cartItems.find(item => item.dishId == dish.dishId)
+    const alreadyexists = cartItems.find(item => item.dishId === dish.dishId)
     if (!alreadyexists) {
       const newdish = {...dish, quantity: 1}
       setCartItems(prev => [...prev, newdish])
     } else {
       setCartItems(prev =>
         prev.map(item =>
-          item.dishId == dish.dishId
+          item.dishId === dish.dishId
             ? {...item, quantity: item.quantity + 1}
             : item,
         ),
@@ -27,12 +27,12 @@ const Home = () => {
   }
 
   const removeItemFromCart = dish => {
-    const alreadyexists = cartItems.find(item => item.dishId == dish.dishId)
+    const alreadyexists = cartItems.find(item => item.dishId === dish.dishId)
     if (alreadyexists) {
       setCartItems(prev =>
         prev
           .map(item =>
-            item.dishId == dish.dishId
+            item.dishId === dish.dishId
               ? {...item, quantity: item.quantity - 1}
               : item,
           )
@@ -73,14 +73,14 @@ const Home = () => {
 
   useEffect(() => {
     fetchRestaurantApi()
-  }, [])
+  }, [fetchRestaurantApi])
 
   const updateCategoryId = menuCategoryId => {
     setActiveCategoryId(menuCategoryId)
   }
 
-  const renderTabList = () => {
-    return response.map(item => {
+  const renderTabList = () =>
+    response.map(item => {
       const onClick1 = () => updateCategoryId(item.menuCategoryId)
 
       return (
@@ -100,11 +100,10 @@ const Home = () => {
         </li>
       )
     })
-  }
 
   const renderDishes = () => {
     const {categoryDishes} = response.find(
-      item => item.menuCategoryId == activeCategoryId,
+      item => item.menuCategoryId === activeCategoryId,
     )
     return (
       <ul className="m-0 d-flex flex-column dishes-list-container">
