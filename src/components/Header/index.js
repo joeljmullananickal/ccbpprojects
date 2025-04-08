@@ -1,28 +1,50 @@
-import './index.css'
-import {FaShoppingCart} from 'react-icons/fa'
+import {useContext} from 'react'
+import {Link, withRouter} from 'react-router-dom'
+import {AiOutlineShoppingCart} from 'react-icons/ai'
+import Cookies from 'js-cookie'
 
-const Header = ({cartItems}) => {
-  const getCartCount = () =>
-    cartItems.reduce((acc, item) => acc + item.quantity, 0)
+import CartContext from '../../context/CartContext'
+
+import './index.css'
+
+const Header = props => {
+  const {cartList, restaurantName} = useContext(CartContext)
+
+  const onLogout = () => {
+    const {history} = props
+    Cookies.remove('jwt_token')
+    history.replace('/login')
+  }
+
   const renderCartIcon = () => (
-    <div className="cart-icon-container">
-      <FaShoppingCart size={30} color="black" />
+    <div className="cart-icon-link">
+      <Link to="/cart">
+        <button type="button" className="cart-icon-button" data-testid="cart">
+          <AiOutlineShoppingCart className="cart-icon" />
+        </button>
+      </Link>
       <div className="cart-count-badge">
-        <p className="m-0 cart-count">{getCartCount()}</p>
+        <p className="m-0 cart-count">{cartList.length}</p>
       </div>
     </div>
   )
+
   return (
-    <header className="p-4  nav-header">
-      <h1 className="m-0 logo-heading">UNI Resto Cafe</h1>
-      <div className="A ms-auto">
+    <header className="p-4 d-flex flex-row align-items-center nav-header">
+      <Link to="/">
+        <h1 className="m-0 logo-heading">{restaurantName}</h1>
+      </Link>
+      <div className="A">
         <p className="mt-0 mb-0 me-2 d-none d-sm-block my-orders-text">
           My Orders
         </p>
+        <button type="button" className="btn" onClick={onLogout}>
+          Logout
+        </button>
         {renderCartIcon()}
       </div>
     </header>
   )
 }
 
-export default Header
+export default withRouter(Header)

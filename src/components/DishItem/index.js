@@ -1,11 +1,9 @@
+import {useState, useContext} from 'react'
+
+import CartContext from '../../context/CartContext'
 import './index.css'
 
-const DishItem = ({
-  dishDetails,
-  cartItems,
-  addItemToCart,
-  removeItemFromCart,
-}) => {
+const DishItem = ({dishDetails}) => {
   const {
     dishId,
     dishName,
@@ -19,20 +17,22 @@ const DishItem = ({
     dishAvailability,
   } = dishDetails
 
-  const onIncreaseQuantity = () => addItemToCart(dishDetails)
-  const onDecreaseQuantity = () => removeItemFromCart(dishDetails)
+  const [quantity, setQuantity] = useState(0)
+  const {addCartItem} = useContext(CartContext)
 
-  const getQuantity = () => {
-    const cartItem = cartItems.find(item => item.dishId === dishId)
-    return cartItem ? cartItem.quantity : 0
-  }
+  const onIncreaseQuantity = () => setQuantity(prevState => prevState + 1)
+
+  const onDecreaseQuantity = () =>
+    setQuantity(prevState => (prevState > 0 ? prevState - 1 : 0))
+
+  const onAddItemToCart = () => addCartItem({...dishDetails, quantity})
 
   const renderControllerButton = () => (
     <div className="controller-container d-flex align-items-center">
       <button className="button" type="button" onClick={onDecreaseQuantity}>
         -
       </button>
-      <p className="quantity">{getQuantity()}</p>
+      <p className="quantity">{quantity}</p>
       <button className="button" type="button" onClick={onIncreaseQuantity}>
         +
       </button>
@@ -58,6 +58,15 @@ const DishItem = ({
         )}
         {addonCat.length !== 0 && (
           <p className="addon-availability-text">Customizations available</p>
+        )}
+        {dishAvailability && quantity > 0 && (
+          <button
+            type="button"
+            className="btn btn-outline-primary mt-3"
+            onClick={onAddItemToCart}
+          >
+            ADD TO CART
+          </button>
         )}
       </div>
 
